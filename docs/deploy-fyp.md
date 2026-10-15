@@ -79,13 +79,15 @@ appone. Сам `jeli.kz` (и `www`) занят лендингом и к Chatwoot
 ## Обновление версии
 
 1. Поменять тег в `docker-compose.coolify.yaml` (`image: chatwoot/chatwoot:vX.Y.Z`)
-   и запушить в `deploy/fyp`.
-2. Запустить деплой руками — кнопкой в панели или
+   и запушить в `deploy/fyp` — деплой запустится сам: на репозитории висит
+   GitHub webhook → Coolify (настроен в fyp-infra для всех приложений).
+2. Автодеплой срабатывает только на изменения `docker-compose.coolify.yaml`
+   (`watch_paths` в Coolify). Пуш доков или чего-то ещё в ветку прод не
+   трогает — и это важно: каждый рестарт стоит 2–4 минуты 503, пока контейнер
+   гоняет `db:chatwoot_prepare`. Если нужно передеплоить без правки манифеста —
+   кнопкой в панели или
    `curl -X POST -H "Authorization: Bearer $COOLIFY_API_TOKEN" \
    "https://coolify.fyp.kz/api/v1/deploy?uuid=7efuf2b7jshecfjm5xw1thyb"`.
-   Флаг авто-деплоя в Coolify включён, но вебхука в репозитории нет
-   (приложение подключено как public repo, без GitHub App), так что пуш сам
-   ничего не запускает.
 3. Миграции накатятся сами при старте контейнера.
 4. Перед мажорным апгрейдом — бэкап базы: Coolify → Databases не подходит
    (postgres поднят внутри compose), поэтому `pg_dump` из контейнера вручную.
