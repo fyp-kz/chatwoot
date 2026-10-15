@@ -7,7 +7,7 @@ Chatwoot живёт на апп-сервере `appone` и управляетс�
 
 | Что | Значение |
 |---|---|
-| Домен | https://chat.fyp.kz |
+| Домен | https://app.jeli.kz (запасной вход — `chat.fyp.kz`) |
 | Coolify project | `chatwoot` (`oswjtubmiwu8k9bltwflreas`) |
 | Application UUID | `7efuf2b7jshecfjm5xw1thyb` |
 | Сервер | `appone` (`9ny7bymwnm6vcignkcitzse2`), публичный IP 91.224.74.35 |
@@ -55,6 +55,13 @@ Traefik отдаёт 503: контейнер ещё не слушает 3000.
 домена его надо менять вместе с доменом в Coolify, иначе виджет на сайте клиента
 будет ходить на старый адрес.
 
+Домены сервиса задаются в Coolify (`docker_compose_domains` у сервиса `rails`),
+несколько — через запятую. Зона `jeli.kz` живёт в Cloudflare; `app.jeli.kz`
+отдельной записи не имеет — его ловит проксированный wildcard `*.jeli.kz` →
+appone. Сам `jeli.kz` (и `www`) занят лендингом и к Chatwoot отношения не имеет:
+не добавлять его в домены приложения, иначе Traefik на appone начнёт перехватывать
+трафик лендинга, если запись когда-нибудь укажет на этот сервер.
+
 Почта не настроена: `SMTP_ADDRESS` пуст. Не работают приглашения агентов,
 сброс пароля и уведомления на e-mail. Чтобы включить — заполнить `SMTP_*`
 (и `MAILER_SENDER_EMAIL` на домене, который разрешён SPF/DKIM).
@@ -88,7 +95,7 @@ Traefik отдаёт 503: контейнер ещё не слушает 3000.
 - Логи контейнеров: панель → приложение → Logs, или
   `GET /api/v1/applications/7efuf2b7jshecfjm5xw1thyb/logs?lines=100`.
 - 503 от Traefik сразу после деплоя — нормально, идут миграции; проверять
-  `curl https://chat.fyp.kz/health` до появления `{"status":"woot"}`.
+  `curl https://app.jeli.kz/health` до появления `{"status":"woot"}`.
 - 503, который не проходит, — смотреть логи `rails`: чаще всего не хватает
   переменной окружения или не поднялся postgres.
 - Проверка живости: `/health` (только веб-процесс). Контейнерный healthcheck
