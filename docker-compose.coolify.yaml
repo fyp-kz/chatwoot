@@ -13,7 +13,11 @@
 
 services:
   rails:
-    image: chatwoot/chatwoot:v4.17.1
+    # Образ = официальный chatwoot + статика Jeli (branding/Dockerfile).
+    # Своё имя тега, чтобы FROM не ссылался сам на себя при пересборке.
+    image: jeli/chatwoot:v4.17.1-brand
+    build:
+      context: ./branding
     entrypoint: docker/entrypoints/rails.sh
     # db:chatwoot_prepare идемпотентен: на пустой базе грузит схему и сиды,
     # дальше — только миграции. Держим его здесь, чтобы апгрейд версии
@@ -26,6 +30,8 @@ services:
       - NODE_ENV=production
       - RAILS_ENV=production
       - INSTALLATION_ENV=docker
+      # Без EE-слоя: на community-плане он ежедневно сбрасывает брендинг на Chatwoot.
+      - DISABLE_ENTERPRISE=true
       - RAILS_LOG_TO_STDOUT=true
       - LOG_LEVEL=info
       - FRONTEND_URL=${FRONTEND_URL}
@@ -80,6 +86,8 @@ services:
       - NODE_ENV=production
       - RAILS_ENV=production
       - INSTALLATION_ENV=docker
+      # Без EE-слоя: на community-плане он ежедневно сбрасывает брендинг на Chatwoot.
+      - DISABLE_ENTERPRISE=true
       - RAILS_LOG_TO_STDOUT=true
       - LOG_LEVEL=info
       - FRONTEND_URL=${FRONTEND_URL}
