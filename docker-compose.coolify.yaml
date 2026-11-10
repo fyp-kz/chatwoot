@@ -59,6 +59,8 @@ services:
       - SMTP_DOMAIN=${SMTP_DOMAIN}
       - SMTP_AUTHENTICATION=${SMTP_AUTHENTICATION}
       - SMTP_ENABLE_STARTTLS_AUTO=true
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - FIREBASE_CREDENTIALS=${FIREBASE_CREDENTIALS}
     volumes:
       - storage_data:/app/storage
     depends_on:
@@ -112,6 +114,8 @@ services:
       - SMTP_DOMAIN=${SMTP_DOMAIN}
       - SMTP_AUTHENTICATION=${SMTP_AUTHENTICATION}
       - SMTP_ENABLE_STARTTLS_AUTO=true
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - FIREBASE_CREDENTIALS=${FIREBASE_CREDENTIALS}
     volumes:
       - storage_data:/app/storage
     depends_on:
