@@ -82,7 +82,10 @@ services:
     restart: always
 
   sidekiq:
-    image: chatwoot/chatwoot:v4.17.1
+    # Тот же брендовый образ: пуши собирает sidekiq, ему нужны ru-заголовки Jeli.
+    image: jeli/chatwoot:v4.17.1-brand
+    build:
+      context: ./branding
     command: ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
     environment:
       - NODE_ENV=production

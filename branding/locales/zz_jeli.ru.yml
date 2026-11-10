@@ -1,0 +1,9 @@
+# Короткие заголовки пушей Jeli. Имя zz_ — грузится после ru.yml и перекрывает его.
+# Текст пуша уже «Имя: сообщение», номер диалога в заголовке не нужен.
+ru:
+  notifications:
+    notification_title:
+      conversation_creation: 'Новый диалог · %{inbox_name}'
+      conversation_assignment: 'Вам назначен диалог'
+      assigned_conversation_new_message: 'Новое сообщение'
+      conversation_mention: 'Вас упомянули в диалоге'
