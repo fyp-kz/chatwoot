@@ -1,0 +1,50 @@
+name: jeli-b0-check
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: jeli_b0_synthetic
+      POSTGRES_HOST_AUTH_METHOD: trust
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U postgres]
+      interval: 2s
+      retries: 30
+  redis:
+    image: redis:7-alpine
+    command: [redis-server, --save, "", --appendonly, "no"]
+  rails:
+    image: jeli-b0-check:local
+    build:
+      context: ../..
+    entrypoint: []
+    command: [bundle, exec, ruby, -r, /b0-check/coverage.rb, bin/rails, server, -b, 0.0.0.0]
+    environment:
+      RAILS_ENV: production
+      NODE_ENV: production
+      DISABLE_ENTERPRISE: "true"
+      SECRET_KEY_BASE: ${B0_SECRET_KEY_BASE:?}
+      ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: ${B0_ENCRYPTION_KEY:?}
+      ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: ${B0_DETERMINISTIC_KEY:?}
+      ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: ${B0_ENCRYPTION_SALT:?}
+      POSTGRES_HOST: postgres
+      POSTGRES_DATABASE: jeli_b0_synthetic
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: ""
+      REDIS_URL: redis://redis:6379
+      FRONTEND_URL: http://localhost:3000
+      FORCE_SSL: "false"
+      ENABLE_ACCOUNT_SIGNUP: "false"
+      ACTIVE_STORAGE_SERVICE: local
+      RAILS_LOG_LEVEL: fatal
+      LOG_LEVEL: fatal
+      RAILS_MAX_THREADS: "5"
+      WEB_CONCURRENCY: "0"
+    volumes:
+      - .:/b0-check:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started

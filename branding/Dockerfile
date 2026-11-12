@@ -4,3 +4,5 @@
 FROM chatwoot/chatwoot:v4.17.1
 COPY public/ /app/public/
 COPY locales/ /app/config/locales/
+COPY server/app/ /app/app/
+COPY server/config/ /app/config/
